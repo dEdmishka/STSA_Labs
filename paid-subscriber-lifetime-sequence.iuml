@@ -1,0 +1,61 @@
+@startuml paid_subscriber_lifetime_sequence
+
+participant "Paid Subscriber" as PaidSubscriber
+participant "News System" as System
+participant "Payment Gateway" as Payment
+participant "Guest User" as User
+
+User -> System: Browse news content
+System -> User: Displays only the "specially opened" part of the exclusive content
+
+alt User Not Logged In
+    User -> System: User logs or signs in
+else User Logged In
+    System -> User: Shows the "Subscriptions" section
+    User -> System: Selects "Subscriptions" option
+    System -> User: Displays content list including subscription types
+    
+    User -> System: Selects "Exclusive materials and content" subscription option
+    System -> User: Displays available subscription types 
+
+    alt Exclusive Materials
+        User -> System: Selects desired subscription type(exlusive materials and content) and duration(e.g., monthly, yearly)
+    else Weekly digital supplements & magazines
+        User -> System: Selects desired subscription type(digital supplements & magazines) and duration(e.g., weekly, monthly, yearly)
+        User -> System: Chooses the necessary editions of magazines & supplements, and removes the ones he does not need
+    end 
+
+    System -> User: Redirects to secure payment gateway
+    User -> Payment: Processes payment (using valid payment method)
+    Payment -> System: Sends payment confirmation/denial
+
+    
+    alt Payment Confirmed
+        System -> User: Subscription successful notification
+        System -> Admin: Notifies new paid subscriber
+        System -> User: Grants access to a content based on chosen subscription
+    else Payment Denied
+        System -> User: Subscription error notification(not enough money, other reasons)
+    end
+end 
+
+
+
+Editor -> System: Creates exclusive content (articles, media, etc.)
+Editor -> System: Marks content as "Exclusive"
+System -> Admin: Content creation notification (marked as exclusive)
+Admin -> System: Approves and publishes the exclusive content
+System -> PaidSubscriber: Sends notification of new exclusive content
+PaidSubscriber -> System: Accesses and consumes exclusive content
+
+alt Subscription has expired || Insufficient funds for subscription
+    System -> PaidSubscriber: Removes permissions to view the exclusive content or the magazines/supplements
+
+else Paid Subscriber has canceled the subscription
+    PaidSubscriber -> System: Cancels the subscription 
+
+System -> PaidSubscriber: Removes permissions to view the exclusive content or the magazines/supplements
+
+end
+
+@endumlx
