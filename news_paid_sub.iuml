@@ -1,0 +1,29 @@
+@startuml news_paid_sub
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Paid Subscriber" as PaidSubscriber
+
+rectangle "News System" {
+  usecase "View News" as ViewNews
+  usecase "Search News" as SearchNews
+  usecase "Share News" as ShareNews
+
+  usecase "Manage Profile" as ManageProfile
+  usecase "Personalized\nNews Preferences" as PersonNewsPreferences
+
+  usecase "Access to weekly digital\nsupplements & magazines" as AccessWeeklyContent
+  usecase "Exclusive materials and content" as ExclusiveMatAndCont
+
+  ViewNews <-. SearchNews : extend
+  ViewNews <-. ShareNews : extend
+
+  ManageProfile .-> PersonNewsPreferences : include
+
+  PaidSubscriber --> ViewNews
+  PaidSubscriber --> ManageProfile
+  PaidSubscriber --> AccessWeeklyContent
+  PaidSubscriber --> ExclusiveMatAndCont
+}
+
+@enduml
