@@ -1,0 +1,122 @@
+@startuml paid_subscriber_class
+
+package "User Management" {
+    class User << User Managment >> {
+        +username: string
+        +password: string
+        +email: string
+        +profile: Profile
+        +login()
+        +logout()
+        +viewNews()
+        +searchNews(topic: Topic)
+        +shareNews(news: News)
+        +saveNews(news: News)
+    }
+    
+    class Profile << User Managment >> {
+        +userId: string
+        +firstName: string
+        +lastName: string
+        +birthdate: Date
+        +preferences: Preferences
+        +savedNews: set<News>
+        +viewProfile()
+        +updatePreferences()
+    }
+
+    class Preferences << User Managment >> {
+        +region: string
+        +language: string
+        +periodOfTime: string
+        +topics: set<Topic>
+        +subscriptions: set<Subscription>
+        +fontSize: integer
+        +fontColor: string
+        +themeColor: string
+    }
+}
+
+package "Content Management" {
+    class News << Content Managment >> {
+        +title: string
+        +content: string
+        +isPremium: boolean
+        +supplementName: string | null
+        +author: Editor
+        +topics: set<Topic>
+        +publish()
+        +editContent()
+    }
+    
+    class Topic << Content Managment >> {
+        +name: string
+        +description: string
+    }
+    
+    class Editor << Content Managment >> {
+        +username: string
+        +password: string
+        +email: string
+        +profile: Profile
+        +createNews()
+        +editNews()
+        +deleteNews()
+    }
+
+    class Admin << Content Managment >> {
+        +username: string
+        +password: string
+        +email: string
+        +profile: Profile
+        +manageUsers()
+        +manageContent()
+        +manageSubscriptions()
+    }
+}
+
+package "Subscription Managment" {
+
+    class Subscriber << Subscription >> {
+        +username: string
+        +password: string
+        +email: string
+        +profile: Profile
+        +subscribe()
+        +unsubscribe()
+    }
+    
+    class Payment << Subscription >> {
+        +subscriberId: string
+        +paymentId: string
+        +amount: float
+        +date: Date
+        +proceedPayment()
+    }
+
+    class Subscription << Subscription >> {
+        +subscriptionId: string
+        +startDate: Date
+        +endDate: Date
+        +active: boolean
+        +paymentTransaction: Payment
+    }
+}
+
+User *-- Profile : has
+User o-down- News: interacts
+User o-- Topic: interacts
+
+Profile *-- Preferences : has
+Profile *-- News : includes
+News *-- Topic : includes
+News *-- Editor : authored by
+
+Subscriber *-- Subscription : engages in
+Payment --> Subscription : relates to
+
+Admin -right-|> Editor : is a
+Editor --|> User : is a
+Subscriber --|> User : is a
+
+@enduml
