@@ -1,0 +1,43 @@
+@startuml paid_subscriber_communication
+
+actor "Paid Subscriber" as PaidSubscriber
+actor Admin
+actor Editor
+rectangle "Main Page" as MainPage
+rectangle "Exclusive Content Page" as ExclusivePage
+rectangle "Subscription Page" as SubscriptionPage
+rectangle "Subscription Form" as SubscriptionForm
+rectangle "Payment Gateway" as PaymentGateway
+rectangle "Subscription Manager" as SubscriptionManager
+rectangle "Editor Panel" as EditorPanel
+rectangle "Admin Panel" as AdminPanel
+rectangle "News System" as System
+
+PaidSubscriber --> MainPage: 1. Browses news content
+MainPage --> System: 2. Request\nregular content
+System --> MainPage: 3. Response\nregular content
+MainPage --> PaidSubscriber: 4. Display news content
+
+PaidSubscriber --> SubscriptionPage: 5. Get available subscription types  
+SubscriptionPage --> SubscriptionForm: 6. Select subscription type and duration
+SubscriptionForm --> SubscriptionManager: 7. Send subscription request
+SubscriptionManager --> PaymentGateway: 8. Process payment
+PaymentGateway --> SubscriptionManager: 9. Payment confirmation
+SubscriptionManager --> SubscriptionForm: 10. Subscription confirmation
+SubscriptionForm --> SubscriptionPage: 11. Confirmation message
+SubscriptionPage --> PaidSubscriber: 12. Show current\nsubscription-plan info
+
+PaidSubscriber -up-> ExclusivePage: 13. Get exclusive content
+ExclusivePage --> System: 14. Request exclusive content
+System -> System: 15. Check user's subscription status/rights
+System --> ExclusivePage: 16. Response correspond\nexclusive content
+ExclusivePage --> PaidSubscriber: 17. Display exclusive content\n(according to rights)
+
+Editor --> EditorPanel: 19. Creates exclusive\ncontent(articles, media, etc.)
+EditorPanel --> System: 20. Mark content as\n'Exclusive'
+System -left-> Admin: 21. Content creation\nnotification (marked as exclusive)
+Admin --> AdminPanel: 22. Reviews and approves\nthe exclusive content
+AdminPanel --> System: 23. Publish content
+System --> PaidSubscriber: 24. Send notification\nof new exclusive content
+
+@endumlx
