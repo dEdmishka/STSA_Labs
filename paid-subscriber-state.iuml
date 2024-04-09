@@ -1,0 +1,65 @@
+@startuml paid_subscriber_state
+
+[*] -> NotLoggedIn: Guest user\nenters
+
+state NotLoggedIn {
+    state Authentication
+    state "BrowseContent" as BCNotLogIn
+ 
+    [*] -> BCNotLogIn: Browse news content
+    BCNotLogIn --> Authentication: Sign up / Log in
+    BCNotLogIn -> VENotLogIn: Clicks on exclusive content
+    VENotLogIn -> Authentication: Log in
+
+    Authentication --> [*]
+
+    state "ViewExclusive" as VENotLogIn {
+        state "AccessExclusive" as AENotLogIn
+
+        [*] -> AENotLogIn: Access exclusive content
+        AENotLogIn -> AENotLogIn: Access only special part of content 
+        AENotLogIn --> [*]: Subscription required
+    }
+}
+
+state LoggedIn {
+    state "BrowseContent" as BCLogIn
+
+    [*] -> BCLogIn: Browse news content
+
+    BCLogIn --> VELogIn: Chooses the exclusive content
+    BCLogIn --> SubscriptionFlow: Chooses the subscription option
+    BCLogIn -> Profile: Chooses the profile
+    Profile -> [*]
+    
+    state "ExclusiveContent" as VELogIn {
+        state "AccessExclusive" as AELogIn
+
+        [*] -> AELogIn: Access exclusive content
+        AELogIn --> AELogIn: Continue browsing
+        AELogIn --> SubscriptionMissing: Subscription expired\nor needed
+        SubscriptionMissing --> [*]: Renew subscription
+    }
+
+    state SubscriptionFlow {
+        [*] -> ChooseSubscription: Chooses subscription
+
+        ChooseSubscription --> SubscriptionManager: Proceeds \nsubscription form
+
+        SubscriptionManager --> PaymentGateway: Proceeds to payment
+        PaymentGateway --> ChooseSubscription: Payment failed
+        PaymentGateway -> SubscriptionGranted: Payment confirmed
+        
+        SubscriptionGranted --> [*]: Inform about subscription
+    }
+}
+
+state AuthenticationFlow {
+    NotLoggedIn --> AuthenticationFlow: Sign up\n(Log in)
+    AuthenticationFlow --> NotLoggedIn: Log out
+    
+    AuthenticationFlow --> LoggedIn: Log in
+    LoggedIn --> AuthenticationFlow: Log out
+}
+
+@enduml
