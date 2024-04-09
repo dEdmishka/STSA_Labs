@@ -1,0 +1,73 @@
+@startuml paid_subscriber_activity
+
+|Ordinary Content|
+start
+:Browse news content;
+:Display news content;
+
+repeat
+
+  if (User logged in?) then (no)
+    :Log in/sign up;
+    stop
+  endif
+  
+repeat while (User still interacting?)
+
+|Subscription Content|
+if (Accessing exclusive content?) then (yes)
+  :Request exclusive content;
+
+  if (User logged in?) then (yes)
+    
+  if (Subscription active?) then (yes)
+    :Display exclusive content;
+  else (no)
+    :Display "Subscriptions" section;
+    :Select "Subscriptions" option;
+    :Display subscription types;
+
+    if (Subscription selected?) then (yes)
+      :Select subscription\ntype and duration;
+
+      if (Payment successful?) then (yes)
+        :Grant access to content\nbased on subscription;
+      else (no)
+        :Display payment\nerror notification;
+      endif
+
+    endif
+
+  endif
+
+  else (no)
+    :Display only part\nof exclusive content;
+    stop
+  endif
+
+else (no)
+
+  if (Accessing profile) then (yes)
+
+    if (User logged in?) then (yes)
+    :Display profile page;
+      stop
+    endif
+  
+  endif
+
+endif
+
+:Browse news content;
+
+|Editor Panel|
+if (Creating exclusive content?) then (yes)
+  :Create exclusive content;
+  :Admin reviews content;
+  :Admin marks content as "Exclusive";
+  :Notify system of\nnew exclusive content;
+endif
+
+stop
+
+@enduml
