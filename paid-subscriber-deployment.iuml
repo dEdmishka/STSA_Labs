@@ -1,0 +1,42 @@
+@startuml deployment_diagram
+
+node "Server" {
+    [User Management]
+    [Content Management]
+    [Subscription Management]
+    [News System]
+}
+
+database "Server DB" {
+    [PostgreSql Database]
+}
+
+node "Payment Gateway" {
+    [Payment API]
+}
+
+node "Editor's PC" {
+    [Editor Panel]
+}
+
+node "Admin's PC" {
+    [Admin Panel]
+}
+
+node "User's PC" {
+    [Browser]
+}
+
+[Editor's PC] <-[dotted]-> [Content Management]: <<Interacts>>
+[Admin's PC] <-[dotted]-> [Content Management]: <<Interacts>>
+[User's PC] <--> [Server]: <<Interacts>>
+
+[Server] -[dotted]-> [Payment Gateway]
+[Server] -> [Server DB]
+
+[User Management] --> [News System]
+[Content Management] --> [News System]
+[Subscription Management] --> [News System]
+
+@enduml
+
