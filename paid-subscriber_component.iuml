@@ -1,0 +1,74 @@
+@startuml paid_subscriber_component
+
+package "UI" {
+    [User]
+
+    [Web Application] as WebApp
+}
+
+cloud {
+    [OAUTH]
+}
+
+package "Server" {
+    [API Controller] as APIController
+    [Server Application] as ServerApp
+    [Data Access Layer] as DAL
+}
+
+database "Database" {
+    [PostgreSQL\n Database] as PSQLDatabase
+}
+
+cloud {
+    [Payment API] as PayAPI
+}
+
+package "User Management" {
+    [User Component] as UserComponent
+    [Profile Component] as ProfileComponent
+    [Preferences Component] as PreferencesComponent
+
+    UserComponent --> ProfileComponent
+    ProfileComponent --> PreferencesComponent
+}
+
+package "Subscription Management" {
+    [Subscriber Component] as SubscriberComponent
+    [Payment Component] as PaymentComponent
+    [Subscription Component] as SubscriptionComponent
+
+    PaymentComponent --> SubscriptionComponent
+    SubscriptionComponent --> SubscriberComponent
+}
+
+package "Content Management" {
+    [News Component] as NewsComponent
+    [Editor Component] as EditorComponent
+    [Admin Component] as AdminComponent
+
+    cloud {
+        [Editor API] as EditorAPI
+    }
+
+    AdminComponent --> EditorAPI
+    EditorComponent --> EditorAPI
+    EditorAPI --> NewsComponent
+}
+
+User .> WebApp: <<HTTP>>
+WebApp .> OAUTH: <<OAUTH>>
+OAUTH ..> APIController: <<OAUTH>>
+
+WebApp ..> APIController: <<HTTP>>
+DAL --> Database: <<TDC>>
+
+ServerApp -> DAL: handle data\noperations
+APIController --> ServerApp: process income\nrequests
+ServerApp .> PayAPI: \nproceed payment\noperations
+
+ServerApp <--> [Content Management]: handle content\noperations
+ServerApp --> [Subscription Management]: manage subscriptions
+ServerApp --> [User Management]: manage user\noperations
+
+@enduml
